@@ -63,15 +63,14 @@ if code is None:
     error = True
 
 if error:
-    sys.stderr.write("Exiting because of errors...\n")
-    exit(1)
+    print("Exiting because of errors...\n")
+    exit(EXIT_UNKNOWN)
 
 try:
     results = spf.check2(i=ip,s=sender,h=domain,timeout=float(timeout))
 except:
     print "Exception ocurred when trying to check SPF record: ", sys.exc_info()
     exit(EXIT_UNKNOWN)
-
 
 real_code = results[0]
 msg = results[1]
