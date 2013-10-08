@@ -87,7 +87,7 @@ else
     HAS_SCRIPT=1
 fi
 
-if [[ "$SERVICESTATETYPE" == "HARD" && "$SERVICESTATETYPE" == "CRITICAL" ]]
+if [[ "$SERVICESTATETYPE" == "HARD" && "$SERVICESTATE" == "CRITICAL" ]]
 then
     OUT=$($SCRIPT -c set -h $HOST -p $PORT -r master -t $TIMEOUT)
 
