@@ -16,6 +16,7 @@ begin
     require 'optparse/time'
     require 'redis'
     require 'ostruct'
+    require 'yaml'
 rescue => e
     puts "Exception occured when loading required gems: #{e}"
 end
@@ -27,7 +28,7 @@ class RedisChecker
     EXIT_UNKNOWN    = 3
 
     ROLES =  [:master,:slave]
-    COMMANDS = [:check,:set]
+    COMMANDS = [:check,:set,:info]
     LINK_STATUS= [:up,:down]
 
 
@@ -74,10 +75,13 @@ class RedisChecker
 
         end.parse!
 
-
         unless COMMANDS.include?(@command)
             puts "Unrecognized command!"
             exit EXIT_UNKNOWN
+        end
+    
+        if @command == :info
+            return
         end
 
         unless ROLES.include?(@role)
@@ -128,7 +132,6 @@ class RedisChecker
 
     def check
         if @role == :master
-            check = @client.info
             result = check_master
         elsif @role == :slave
             result = check_slave_replication(@master_host,@master_port)
@@ -140,7 +143,7 @@ class RedisChecker
             puts "FAIL: #{result['errors'].join(',')}"
         end
 
-        exit result['status'] == true ? EXIT_CRITICAL : EXIT_OK
+        exit result['status'] == true ? EXIT_OK : EXIT_CRITICAL
 
     end
 
@@ -198,7 +201,7 @@ class RedisChecker
         end
 
         result = check
-        
+
         if result['status']
             puts "OK"
         else
@@ -209,7 +212,9 @@ class RedisChecker
     end
 
     def run!
-        if  @command == :check
+        if @command == :info
+            puts info.to_yaml
+        elsif  @command == :check
             check
         elsif @command == :set
             set
