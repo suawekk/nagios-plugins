@@ -13,7 +13,7 @@ TIMEOUT=10
 HAS_SCRIPT=0
 
 MAIL=0
-MAIL_CMD=$(which mail)
+MAIL_CMD=$(which mutt)
 MAIL_TO=root
 MAIL_FROM=redis-handler
 MAIL_SUBJECT="Redis slave failure event handler"
@@ -80,7 +80,7 @@ function quit {
            ADDITIONAL_INFO="N/A"
         fi
 
-        echo -e "$1\r\nAdditional info:\r\n$ADDITIONAL_INFO" | $MAIL_CMD -s "encoding=quoted-printable" -r $MAIL_FROM -s "$MAIL_SUBJECT" $MAIL_TO
+        echo -e "$1\r\nAdditional info:\r\n$ADDITIONAL_INFO" | $MAIL_CMD  -F /dev/null -s "$MAIL_SUBJECT" $MAIL_TO
     fi
     exit $2
 }
