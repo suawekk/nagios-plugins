@@ -21,7 +21,7 @@ EXIT_WARNING=1
 EXIT_CRITICAL=2
 EXIT_UNKNOWN=3
 
-while getopts ":h:p:s:t:a:mf:r:" OPT
+while getopts ":h:p:s:t:a:mf:r:S:" OPT
 do
     case $OPT in
         h)
@@ -47,6 +47,9 @@ do
         ;;
         r)
             MAIL_TO=$OPTARG
+        ;;
+        S)
+            SCRIPT=$OPTARG
         ;;
         \?)
             echo "Option: -$OPT requires an argument !"
