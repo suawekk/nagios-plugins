@@ -72,7 +72,7 @@ function quit {
            ADDITIONAL_INFO="N/A"
         fi
 
-        echo -e "$1\r\nAdditional info:\r\n$ADDITIONAL_INFO" | $MAIL_CMD -r $MAIL_FROM -s "$MAIL_SUBJECT" $MAIL_TO
+        echo -e "$1\r\nAdditional info:\r\n$ADDITIONAL_INFO" | $MAIL_CMD -s "encoding=utf8" -r $MAIL_FROM -s "$MAIL_SUBJECT" $MAIL_TO
     fi
     exit $2
 }
