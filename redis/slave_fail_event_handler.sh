@@ -59,10 +59,10 @@ do
         S)
             SCRIPT=$OPTARG
         ;;
-        \?)
+        :)
             echo "Option: -$OPT requires an argument !"
         ;;
-        *)
+        \?)
             echo "Unknown option: -$OPTARG !"
         ;;
     esac
