@@ -69,8 +69,13 @@ class X509CrlChecker
             parser.on("-w","--warn WARN_HOURS",Integer,"warning threshold in hours") do |arg|
                 @warn_hours = arg.to_i
             end
+
             parser.on("-c","--crit CRIT_HOURS",Integer,"critical threshold in hours") do |arg|
                 @crit_hours = arg.to_i
+            end
+
+            parser.on("-t","--timeout TIMEOUT",Integer,"net/http read timeout in seconds") do |arg|
+                @timeout = arg.to_i
             end
 
             parser.on("-h","--help","show help") do
@@ -83,13 +88,17 @@ class X509CrlChecker
         unless @uri.to_s =~ URI::regexp
             @unknowns << "Invalid URI passed!"
         end
-        
-        if @crit_hours < 0
-            @unknowns << "No negative critical threshold allowed!"
+ 
+        if @timeout < 0
+            @unknowns << "No negative timeouts allowed !"
         end
 
-        if @warn_hours < 0
-            @unknowns << "No negative warning threshold allowed!"
+        if @crit_hours <= 0
+            @unknowns << "No negative or zero critical threshold allowed!"
+        end
+
+        if @warn_hours <= 0
+            @unknowns << "No negative or zero warning threshold allowed!"
         end
 
         if @crit_hours >= @warn_hours
@@ -103,6 +112,7 @@ class X509CrlChecker
         begin
             http = Net::HTTP.new(uri.host,uri.port)
             http.read_timeout = @timeout
+            http.open_timeout = @timeout
 
             response = http.get(uri.path)
 
@@ -115,7 +125,7 @@ class X509CrlChecker
             end
 
         rescue Timeout::Error => e
-            @unknowns << "Read timeout from #{uri.to_s}"
+            @unknowns << "Open/Read timeout from #{uri.to_s}, exception raised:  #{e}"
             return false
         rescue => e
             @unknowns << "Failed to retrieve uri: #{e.message}"
