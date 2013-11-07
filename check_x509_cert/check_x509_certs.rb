@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 ################################################################################
-# Ruby CRL validity checker for nagios
+# Ruby x509 certificate  validity checker for nagios
 #
 # Author: Sławomir Kowalski <suawekk+github@gmail.com>
 #
@@ -18,7 +18,6 @@ begin
     require 'openssl'
     require 'colorize'
     require 'heredoc_unindent'
-    require 'json'
 rescue => e
     puts "Exception occured when loading required gems: #{e}"
 end
@@ -119,38 +118,6 @@ class X509CertChecker
         end
     end
 
-    def status(desc,code=EXIT_OK)
-            additional = ''
-
-            if code == EXIT_OK
-                additional = @infos.join(',')
-            elsif code == EXIT_WARNING
-                additional = @warnings.join(',')
-            elsif code == EXIT_CRITICAL
-                additional = @errors.join(',')
-            else
-                additional = @unknowns.join(',')
-            end
-
-            puts "CHECK_CERTS #{desc.upcase}: #{additional}"
-            exit code
-    end
-
-    def unknown
-        status 'unknown',3
-    end
-
-    def error
-        status 'critical',2
-    end
-
-    def warning
-        status 'warning',1
-    end
-
-    def ok
-        status 'ok',0
-    end
 
     def process_all_certs(paths)
         results = {}
@@ -216,7 +183,7 @@ class X509CertChecker
 
         aggregated_result = process_results results
 
-        puts "%s : %s" % [aggregated_result[1],aggregated_result[2].join(',')]
+        puts "%s: %s" % [aggregated_result[1],aggregated_result[2].join(',')]
         exit aggregated_result[0]
 
     end
