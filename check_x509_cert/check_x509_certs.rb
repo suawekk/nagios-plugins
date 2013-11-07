@@ -14,9 +14,7 @@ begin
     require 'optparse'
     require 'optparse/time'
     require 'ostruct'
-    require 'yaml'
     require 'openssl'
-    require 'colorize'
     require 'heredoc_unindent'
 rescue => e
     puts "Exception occured when loading required gems: #{e}"
