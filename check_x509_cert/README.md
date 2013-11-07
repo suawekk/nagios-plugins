@@ -15,3 +15,5 @@ then script will check for all files matching pattern
 'path/to/certs/*.crt' and  issue error when any of them will expire in
 less than 72 hours or issue warning if any of them will expire in less
 than 360 hours 
+
+Exit codes are typical for nagios check [ 0=OK,1=Warning,2=Critical,3=Unknown ]
