@@ -65,6 +65,9 @@ class SitemapChecker
             opts.on('-m', '--minlocations MINLOCATIONS',Integer) do |minlocations|
                 @options[:minlocations] = minlocations
             end
+            opts.on('-t', '--timeout TIMEOUT',Integer) do |timeout|
+                @options[:timeout] = timeout
+            end
 
         end.parse!
 
@@ -153,9 +156,18 @@ class SitemapChecker
     def fetch(url)
         return false if url.nil?
 
+        begin
         c = Curl::Easy.perform(url.to_s) do |curl|
             curl.headers["User-Agent"] = @options[:useragent]
             curl.follow_location = TRUE
+            curl.timeout = @options[:timeout]
+        end
+        rescue Curl::Err::TimeoutError => e
+            puts "#{CHECK_NAME} CRITICAL: server timed out after #{@options[:timeout]} secs"
+            exit EXIT_CRIT
+        rescue => e
+            puts "#{CHECK_NAME} CRITICAL: HTTP Request Error: #{e.message}"
+            exit EXIT_CRIT
         end
 
         return [c.response_code,c.body_str]
