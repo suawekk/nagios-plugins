@@ -45,7 +45,6 @@ class SitemapChecker
         unless results.kind_of?(Hash)
             results = Hash.new
         end
-        puts "parse_opts"
 
         errors = Array.new
 
@@ -152,8 +151,6 @@ class SitemapChecker
     end
 
     def fetch(url)
-        puts "Fetch #{url}"
-
         return false if url.nil?
 
         c = Curl::Easy.perform(url.to_s) do |curl|
