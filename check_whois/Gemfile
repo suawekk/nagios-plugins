@@ -1,0 +1,5 @@
+source 'https://rubygems.org'
+
+gem 'nagiosplugin', '~> 2.1'
+gem 'whois', '~> 3.5'
+gem 'unindent', '~> 1.0'
