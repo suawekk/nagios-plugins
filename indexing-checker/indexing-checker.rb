@@ -71,7 +71,7 @@ ROBOTS_PATH='/robots.txt'
 META_ROBOTS_TAG_SELECTOR='//meta[translate(@name,ABCDEFGHIJKLMNOPQRSTUVWXYZ,abcdefghijklmnopqrstuvwxyz)="robots"]'
 
 
-class RobotsMatcherCheck
+class URIIndexingCheck
     def initialize
 
         @robots = {}
@@ -428,4 +428,4 @@ class RobotsMatcherCheck
 
 end
 
-RobotsMatcherCheck.new
+URIIndexingCheck.new
