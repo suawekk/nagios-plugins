@@ -36,7 +36,8 @@ class SitemapChecker
             :timeout => 30,
             :useragent => $USER_AGENT,
             :url => nil,
-            :minlocations => 0
+            :minlocations => 0,
+            :maxlocations => nil
         }
     end
 
@@ -65,8 +66,14 @@ class SitemapChecker
             opts.on('-m', '--minlocations MINLOCATIONS',Integer) do |minlocations|
                 @options[:minlocations] = minlocations
             end
+            opts.on('-M', '--maxlocations MAXLOCATIONS',Integer) do |maxlocations|
+                @options[:maxlocations] = maxlocations
+            end
             opts.on('-t', '--timeout TIMEOUT',Integer) do |timeout|
                 @options[:timeout] = timeout
+            end
+            opts.on('-s', '--[no-]ssl-verify', "Toggle SSL Peer Verification") do |verify|
+                @options[:ssl_verify] = verify
             end
 
         end.parse!
@@ -103,6 +110,16 @@ class SitemapChecker
 
             if locs_num < @options[:minlocations]
                 validation_errors << "sitemap has not enough locations (%d < %d)" % [locs_num,@options[:minlocations]]
+            end
+        end
+
+        unless @options[:maxlocations].nil?
+            if locs_num.nil?
+                locs_num = count_url_locs(doc)
+            end
+
+            if locs_num > @options[:maxlocations]
+                validation_errors << "sitemap has too many locations (%d > %d)" % [locs_num,@options[:maxlocations]]
             end
         end
 
@@ -150,6 +167,8 @@ class SitemapChecker
                 [ -n | --no-validate]
                 [ -r RETRIES | --retries RETRIES ]
                 [ -m  MINLOCATIONS | --minlocations MINLOCATIONS ]
+                [ -m  MAXLOCATIONS | --maxlocations MAXLOCATIONS ]
+                [ -s |--no-ssl-verify | --ssl-verify ]
         EOD
     end
 
@@ -158,6 +177,7 @@ class SitemapChecker
 
         begin
         c = Curl::Easy.perform(url.to_s) do |curl|
+            curl.ssl_verify_peer = @options[:ssl_verify == true ? true : false]
             curl.headers["User-Agent"] = @options[:useragent]
             curl.follow_location = TRUE
             curl.timeout = @options[:timeout]
